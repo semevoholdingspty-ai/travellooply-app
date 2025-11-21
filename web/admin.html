@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travellooply Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1A73E8 0%, #FF9F1C 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #1A73E8;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1A73E8;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #1A73E8;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f5f7fa;
+            padding: 12px;
+            text-align: left;
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        
+        tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+        
+        .status-expired {
+            background: #FFEBEE;
+            color: #F44336;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            background: #FFEBEE;
+            color: #F44336;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .refresh-btn {
+            background: #1A73E8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .refresh-btn:hover {
+            background: #1557b0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Travellooply Admin Dashboard</h1>
+            <p class="subtitle">Real-time monitoring and management</p>
+        </div>
+        
+        <div id="error-message"></div>
+        
+        <button class="refresh-btn" onclick="loadData()">🔄 Refresh Data</button>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-users">-</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-circles">-</div>
+                <div class="stat-label">Active Circles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-events">-</div>
+                <div class="stat-label">Upcoming Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-messages">-</div>
+                <div class="stat-label">Messages Today</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>👥 Recent Users</h2>
+            <div id="users-table">
+                <div class="loading">Loading users...</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>⭕ Active Circles</h2>
+            <div id="circles-table">
+                <div class="loading">Loading circles...</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📅 Upcoming Events</h2>
+            <div id="events-table">
+                <div class="loading">Loading events...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, query, where, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Firebase configuration (same as your app)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtfNDX4fpARW7aEX41gtBdLmfSRmdiFss",
+            authDomain: "travellooply.firebaseapp.com",
+            projectId: "travellooply",
+            storageBucket: "travellooply.firebasestorage.app",
+            messagingSenderId: "432030718552",
+            appId: "1:432030718552:web:94bc32db14319583f6082d",
+            measurementId: "G-7W8Q252LZZ"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // Load data
+        window.loadData = async function() {
+            try {
+                document.getElementById('error-message').innerHTML = '';
+                
+                // Load stats
+                await loadStats();
+                
+                // Load tables
+                await loadUsers();
+                await loadCircles();
+                await loadEvents();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('error-message').innerHTML = `
+                    <div class="error">
+                        ❌ Error loading data: ${error.message}
+                        <br>Make sure Firestore database is created and has data.
+                    </div>
+                `;
+            }
+        };
+        
+        async function loadStats() {
+            // Users count
+            const usersSnap = await getDocs(collection(db, 'users'));
+            document.getElementById('stat-users').textContent = usersSnap.size;
+            
+            // Active circles
+            const circlesQuery = query(
+                collection(db, 'circles'),
+                where('status', '==', 'active')
+            );
+            const circlesSnap = await getDocs(circlesQuery);
+            document.getElementById('stat-circles').textContent = circlesSnap.size;
+            
+            // Upcoming events
+            const eventsQuery = query(
+                collection(db, 'events'),
+                where('status', '==', 'upcoming')
+            );
+            const eventsSnap = await getDocs(eventsQuery);
+            document.getElementById('stat-events').textContent = eventsSnap.size;
+            
+            // Messages today
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const messagesSnap = await getDocs(collection(db, 'messages'));
+            const todayMessages = messagesSnap.docs.filter(doc => {
+                const timestamp = doc.data().timestamp.toDate();
+                return timestamp >= today;
+            });
+            document.getElementById('stat-messages').textContent = todayMessages.length;
+        }
+        
+        async function loadUsers() {
+            const usersQuery = query(
+                collection(db, 'users'),
+                orderBy('createdAt', 'desc'),
+                limit(10)
+            );
+            const snapshot = await getDocs(usersQuery);
+            
+            let html = '<table><thead><tr><th>Username</th><th>Email</th><th>Country</th><th>Trust Score</th><th>Online</th><th>Created</th></tr></thead><tbody>';
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                html += `
+                    <tr>
+                        <td>${data.username || 'N/A'}</td>
+                        <td>${data.email || 'N/A'}</td>
+                        <td>${data.country || 'N/A'}</td>
+                        <td><strong>${Math.round(data.trustScore || 50)}</strong></td>
+                        <td>${data.isOnline ? '🟢 Online' : '⚫ Offline'}</td>
+                        <td>${createdAt}</td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('users-table').innerHTML = html;
+        }
+        
+        async function loadCircles() {
+            const circlesQuery = query(
+                collection(db, 'circles'),
+                orderBy('createdAt', 'desc'),
+                limit(10)
+            );
+            const snapshot = await getDocs(circlesQuery);
+            
+            let html = '<table><thead><tr><th>Activity</th><th>Members</th><th>Status</th><th>Radius</th><th>Created</th><th>Expires</th></tr></thead><tbody>';
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : 'N/A';
+                const expiresAt = data.expiresAt ? new Date(data.expiresAt.seconds * 1000).toLocaleString() : 'N/A';
+                const isActive = data.status === 'active';
+                
+                html += `
+                    <tr>
+                        <td><strong>${data.activityType || 'N/A'}</strong></td>
+                        <td>${data.memberIds ? data.memberIds.length : 0} members</td>
+                        <td><span class="status ${isActive ? 'status-active' : 'status-expired'}">${data.status || 'unknown'}</span></td>
+                        <td>${data.radius || 0}m</td>
+                        <td>${createdAt}</td>
+                        <td>${expiresAt}</td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('circles-table').innerHTML = html;
+        }
+        
+        async function loadEvents() {
+            const eventsQuery = query(
+                collection(db, 'events'),
+                orderBy('startTime', 'desc'),
+                limit(10)
+            );
+            const snapshot = await getDocs(eventsQuery);
+            
+            let html = '<table><thead><tr><th>Type</th><th>Description</th><th>Participants</th><th>Max</th><th>Status</th><th>Start Time</th></tr></thead><tbody>';
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const startTime = data.startTime ? new Date(data.startTime.seconds * 1000).toLocaleString() : 'N/A';
+                const participants = data.participantIds ? data.participantIds.length : 0;
+                const maxParticipants = data.maxParticipants || 0;
+                const isUpcoming = data.status === 'upcoming';
+                
+                html += `
+                    <tr>
+                        <td><strong>${data.type || 'N/A'}</strong></td>
+                        <td>${data.description || 'No description'}</td>
+                        <td>${participants} / ${maxParticipants}</td>
+                        <td>${maxParticipants}</td>
+                        <td><span class="status ${isUpcoming ? 'status-active' : 'status-expired'}">${data.status || 'unknown'}</span></td>
+                        <td>${startTime}</td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('events-table').innerHTML = html;
+        }
+        
+        // Auto-load on page load
+        loadData();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>

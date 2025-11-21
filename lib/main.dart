@@ -12,6 +12,7 @@ import 'services/auth_service.dart';
 import 'services/auth_service_real.dart';
 import 'services/location_service.dart';
 import 'services/firestore_service.dart';
+import 'services/notification_service.dart';
 import 'config/firebase_config.dart';
 
 void main() async {
@@ -26,6 +27,9 @@ void main() async {
     debugPrint('✅ Firebase initialized successfully');
     debugPrint('🔧 Real Firebase mode: ${FirebaseConfig.USE_REAL_FIREBASE}');
   }
+  
+  // Initialize push notifications
+  await NotificationService.initialize();
   
   // Initialize mock data only if using mock Firebase
   if (!FirebaseConfig.USE_REAL_FIREBASE) {
