@@ -6,6 +6,7 @@ import 'firebase_options.dart';
 import 'constants/app_constants.dart';
 import 'screens/splash_screen.dart';
 import 'screens/onboarding/welcome_screen.dart';
+import 'screens/onboarding/location_permission_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'services/auth_service.dart';
 import 'services/auth_service_real.dart';
@@ -107,6 +108,7 @@ class TravellooPlyApp extends StatelessWidget {
       home: const SplashScreen(),
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
+        '/location-permission': (context) => const LocationPermissionScreen(),
         '/home': (context) => const HomeScreen(),
       },
       ),

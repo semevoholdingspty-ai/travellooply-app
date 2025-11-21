@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_constants.dart';
-import 'map_radar_screen.dart';
+import 'map_radar_screen_updated.dart';
 import '../circles/circles_list_screen.dart';
 import '../events/events_list_screen.dart';
 import '../profile/profile_screen.dart';
@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const MapRadarScreen(),
+    const MapRadarScreenUpdated(),
     const CirclesListScreen(),
     const EventsListScreen(),
     const ProfileScreen(),
