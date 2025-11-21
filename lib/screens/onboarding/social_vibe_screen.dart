@@ -130,7 +130,7 @@ class _SocialVibeScreenState extends State<SocialVibeScreen> {
                     onPressed: selectedVibe != null
                         ? () {
                             // Navigate to home screen after onboarding
-                            Navigator.pushNamed(context, '/location-permission');
+                            Navigator.pushNamed(context, '/email-verification');
                           }
                         : null,
                     style: ElevatedButton.styleFrom(

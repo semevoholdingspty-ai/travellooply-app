@@ -11,6 +11,8 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -19,6 +21,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -28,13 +32,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _continueToOnboarding() {
     if (!_formKey.currentState!.validate()) return;
 
-    // Store email/password for later use after onboarding
+    // Store user data for later use after onboarding
+    final username = '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}';
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TravelIntentScreen(
           email: _emailController.text.trim(),
           password: _passwordController.text,
+          username: username,
         ),
       ),
     );
@@ -71,6 +77,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: AppStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 40),
+                  
+                  // First Name
+                  TextFormField(
+                    controller: _firstNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'First Name',
+                      prefixIcon: Icon(Icons.person_outline),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your first name';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Last Name
+                  TextFormField(
+                    controller: _lastNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Last Name',
+                      prefixIcon: Icon(Icons.person_outline),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your last name';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
                   
                   // Email
                   TextFormField(

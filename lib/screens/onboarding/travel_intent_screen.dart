@@ -5,8 +5,9 @@ import 'activity_preferences_screen.dart';
 class TravelIntentScreen extends StatefulWidget {
   final String? email;
   final String? password;
+  final String? username;
   
-  const TravelIntentScreen({super.key, this.email, this.password});
+  const TravelIntentScreen({super.key, this.email, this.password, this.username});
 
   @override
   State<TravelIntentScreen> createState() => _TravelIntentScreenState();
