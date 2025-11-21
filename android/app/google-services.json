@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "432030718552",
+    "project_id": "travellooply",
+    "storage_bucket": "travellooply.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432030718552:android:ce7b415e3379a2fcf6082d",
+        "android_client_info": {
+          "package_name": "com.travellooply.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2oSAEQEEtA67YcZ9qoRIxTkn7qPZCpTQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
