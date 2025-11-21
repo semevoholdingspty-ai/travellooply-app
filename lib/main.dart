@@ -7,6 +7,8 @@ import 'constants/app_constants.dart';
 import 'screens/splash_screen.dart';
 import 'screens/onboarding/welcome_screen.dart';
 import 'screens/onboarding/location_permission_screen.dart';
+import 'screens/auth/signin_screen.dart';
+import 'screens/auth/signup_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'services/auth_service.dart';
 import 'services/auth_service_real.dart';
@@ -112,6 +114,8 @@ class TravellooPlyApp extends StatelessWidget {
       home: const SplashScreen(),
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
+        '/signin': (context) => const SignInScreen(),
+        '/signup': (context) => const SignUpScreen(),
         '/location-permission': (context) => const LocationPermissionScreen(),
         '/home': (context) => const HomeScreen(),
       },

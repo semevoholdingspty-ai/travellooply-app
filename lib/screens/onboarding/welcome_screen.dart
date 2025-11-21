@@ -81,12 +81,7 @@ class WelcomeScreen extends StatelessWidget {
                       height: 56,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const TravelIntentScreen(),
-                            ),
-                          );
+                          Navigator.pushNamed(context, '/signup');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
@@ -98,7 +93,7 @@ class WelcomeScreen extends StatelessWidget {
                           shadowColor: Colors.black.withValues(alpha: 0.3),
                         ),
                         child: const Text(
-                          'Get Started',
+                          'Sign Up',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -113,8 +108,7 @@ class WelcomeScreen extends StatelessWidget {
                       height: 56,
                       child: OutlinedButton(
                         onPressed: () {
-                          // Navigate to login (for demo, go to home)
-                          Navigator.pushReplacementNamed(context, '/home');
+                          Navigator.pushNamed(context, '/signin');
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.white,
@@ -124,7 +118,7 @@ class WelcomeScreen extends StatelessWidget {
                           ),
                         ),
                         child: const Text(
-                          'I Already Have an Account',
+                          'Sign In',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
